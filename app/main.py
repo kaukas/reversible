@@ -4,10 +4,12 @@ from uuid import uuid4
 from fastapi import BackgroundTasks, FastAPI, UploadFile
 from sqlmodel import select
 
+from db_models import Image
+
 from app.core.validate_image import validate_and_modify_image
 from app.core.config import settings
 from app.deps import SessionDep
-from app.models import Image, ImagePublic, ImagesPublic
+from app.models import ImagePublic, ImagesPublic
 
 
 app = FastAPI()
@@ -23,7 +25,7 @@ def create_image(
     session: SessionDep, image: UploadFile, background_tasks: BackgroundTasks
 ):
     original_filepath = join(settings.IMAGE_UPLOADED_PATH, str(uuid4()))
-    with open(original_filepath, "wb+") as dest_file:
+    with open(original_filepath, "xb") as dest_file:
         copyfileobj(image.file, dest_file)
 
     image_entry = Image(

@@ -7,15 +7,18 @@ from sqlmodel import SQLModel, Session, create_engine, select
 from PIL import Image as PILImage
 from pyfakefs.fake_filesystem import FakeFilesystem
 
+from db_models import Image
+
 from app.core.config import settings
 from app.deps import get_session
-from app.models import Image
 from .main import app
+
 
 @fixture
 def standard_dirs(fs: FakeFilesystem):
     fs.makedirs(settings.IMAGE_UPLOADED_PATH)
     fs.makedirs(settings.IMAGE_MODIFIED_PATH)
+
 
 @fixture(name="session")
 def session_fixture():
@@ -43,7 +46,7 @@ def test_lists_images(session: Session, client: TestClient):
             Image(filename="cat.png", original_filepath="/tmp/cat.png"),
             Image(
                 filename="dog.png",
-                original_filepath="/tmp/dog.jpg",
+                original_filepath="",
                 valid_image=True,
                 reversible=False,
             ),
@@ -61,13 +64,13 @@ def test_lists_images(session: Session, client: TestClient):
     }
 
 
-@mark.usefixtures('standard_dirs')
+@mark.usefixtures("standard_dirs")
 def test_uploads_an_image(session: Session, client: TestClient, fs: FakeFilesystem):
     assert client.get("/images").json() == {"images": []}
 
-    image = PILImage.new("RGBA", (10, 10))
+    pil_image = PILImage.new("RGBA", (10, 10))
     buffer = BytesIO()
-    image.save(buffer, "png")
+    pil_image.save(buffer, "png")
 
     response = client.post("/images", files={"image": ("cat.png", buffer)})
     assert response.status_code == 200
@@ -86,13 +89,13 @@ def test_uploads_an_image(session: Session, client: TestClient, fs: FakeFilesyst
     assert fs.exists(image_entry.original_filepath)
 
 
-@mark.usefixtures('standard_dirs')
+@mark.usefixtures("standard_dirs")
 def test_modifies_the_uploaded_image(
     session: Session, client: TestClient, fs: FakeFilesystem
 ):
-    image = PILImage.new("RGBA", (10, 10))
+    pil_image = PILImage.new("RGBA", (10, 10))
     buffer = BytesIO()
-    image.save(buffer, "png")
+    pil_image.save(buffer, "png")
 
     response = client.post("/images", files={"image": ("cat.png", buffer)})
     assert response.status_code == 200

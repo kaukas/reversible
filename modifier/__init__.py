@@ -1,13 +1,22 @@
 from math import floor
 from random import sample
+from typing import Iterable
 from PIL.Image import Image
 
 
 class BitFlipper:
     def modify(self, image: Image, pixel_count: int = 100):
         dims = image.size
-        flipped = set(sample(range(dims[0] * dims[1]), k=pixel_count))
-        for i in flipped:
+        to_flip = set(sample(range(dims[0] * dims[1]), k=pixel_count))
+        self._flip(image, to_flip)
+        return sorted(to_flip)
+
+    def unmodify(self, image: Image, flipped_indices: Iterable[int]):
+        self._flip(image, flipped_indices)
+
+    def _flip(self, image: Image, indices: Iterable[int]):
+        dims = image.size
+        for i in indices:
             xy = (floor(i / dims[1]), i % dims[1])
             rgba = image.getpixel(xy)
             if not rgba:
