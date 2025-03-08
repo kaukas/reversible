@@ -1,6 +1,6 @@
 from pytest import fixture
 from sqlalchemy.pool import StaticPool
-from sqlmodel import SQLModel, Session, create_engine, select
+from sqlmodel import SQLModel, Session, create_engine, select, asc
 
 from db_models import Image
 
@@ -97,7 +97,7 @@ def test_persists_modified_image_entries(session: Session):
     src_images[2].reversible = False
     save_images(session, src_images)
 
-    assert session.exec(select(Image.reversible).order_by(Image.id)).all() == [  # type: ignore
+    assert session.exec(select(Image.reversible).order_by(asc(Image.id))).all() == [
         True,
         True,
         False,
