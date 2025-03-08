@@ -107,3 +107,12 @@ def test_modifies_the_uploaded_image(
     assert fs.exists(image_entry.modified_filepath)
 
     assert image_entry.valid_image == True
+
+
+@mark.usefixtures("standard_dirs")
+def test_marks_invalid_image(session: Session, client: TestClient):
+    buffer = BytesIO(b"not an image at all")
+
+    response = client.post("/images", files={"image": ("cat.png", buffer)})
+    assert response.status_code == 200
+    assert session.exec(select(Image.valid_image)).one() == False

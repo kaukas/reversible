@@ -33,7 +33,10 @@ def session_fixture():
 
 def create_image(**kwargs):
     image_entry = Image(
-        original_filepath=join(settings.IMAGE_UPLOADED_PATH, str(uuid4())), **kwargs
+        original_filepath=join(settings.IMAGE_UPLOADED_PATH, str(uuid4())),
+        modified_filepath=join(settings.IMAGE_MODIFIED_PATH, str(uuid4())),
+        valid_image=True,
+        **kwargs,
     )
 
     pil_image = PILImage.new("RGBA", (10, 10))
@@ -43,11 +46,10 @@ def create_image(**kwargs):
 
 @mark.usefixtures("standard_dirs")
 def test_sets_reversibility_of_previously_unchecked_image_records(session: Session):
-    modified_filepath = join(settings.IMAGE_MODIFIED_PATH, str(uuid4()))
-    image_entry = create_image(modified_filepath=modified_filepath)
+    image_entry = create_image()
     pil_image = PILImage.open(image_entry.original_filepath)
     image_entry.modification_params = dumps(modify(pil_image))
-    pil_image.save(modified_filepath, "png")
+    pil_image.save(cast(str, image_entry.modified_filepath), "png")
 
     src_images = [
         # These two will be ignored.

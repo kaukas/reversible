@@ -8,6 +8,7 @@ def find_unverified(session: Session):
     yield from session.exec(
         select(Image)
         .where(Image.modified_filepath != None)
+        .where(Image.valid_image == True)
         .where(Image.reversible == None)
     )
 

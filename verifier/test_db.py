@@ -21,9 +21,24 @@ def session_fixture():
 
 def test_yields_unverified_image_entries_from_db(session: Session):
     src_images = [
-        Image(original_filepath="a", modified_filepath="m", reversible=None),
-        Image(original_filepath="b", modified_filepath="n", reversible=False),
-        Image(original_filepath="c", modified_filepath="o", reversible=True),
+        Image(
+            original_filepath="a",
+            modified_filepath="m",
+            valid_image=True,
+            reversible=None,
+        ),
+        Image(
+            original_filepath="b",
+            modified_filepath="n",
+            valid_image=True,
+            reversible=False,
+        ),
+        Image(
+            original_filepath="c",
+            modified_filepath="o",
+            valid_image=True,
+            reversible=True,
+        ),
     ]
     session.add_all(src_images)
 
@@ -33,8 +48,33 @@ def test_yields_unverified_image_entries_from_db(session: Session):
 
 def test_skips_images_that_have_not_been_modified_yet(session: Session):
     src_images = [
-        Image(original_filepath="a", reversible=None),
-        Image(original_filepath="b", reversible=None, modified_filepath="m"),
+        Image(original_filepath="a", reversible=None, valid_image=True),
+        Image(
+            original_filepath="b",
+            reversible=None,
+            valid_image=True,
+            modified_filepath="m",
+        ),
+    ]
+    session.add_all(src_images)
+
+    assert [i.id for i in find_unverified(session)] == [src_images[1].id]
+
+
+def test_skips_invalid_images(session: Session):
+    src_images = [
+        Image(
+            original_filepath="a",
+            reversible=None,
+            modified_filepath="m",
+            valid_image=False,
+        ),
+        Image(
+            original_filepath="b",
+            reversible=None,
+            modified_filepath="m",
+            valid_image=True,
+        ),
     ]
     session.add_all(src_images)
 
