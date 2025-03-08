@@ -11,6 +11,7 @@ from modifier import modify
 from verifier import settings
 from verifier.reverser import reversible
 
+
 @fixture
 def standard_dirs(fs: FakeFilesystem):
     fs.makedirs(settings.IMAGE_UPLOADED_PATH)

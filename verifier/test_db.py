@@ -21,14 +21,24 @@ def session_fixture():
 
 def test_yields_unverified_image_entries_from_db(session: Session):
     src_images = [
-        Image(original_filepath="a", reversible=None),
-        Image(original_filepath="b", reversible=False),
-        Image(original_filepath="c", reversible=True),
+        Image(original_filepath="a", modified_filepath="m", reversible=None),
+        Image(original_filepath="b", modified_filepath="n", reversible=False),
+        Image(original_filepath="c", modified_filepath="o", reversible=True),
     ]
     session.add_all(src_images)
 
     found_images = find_unverified(session)
     assert [i.id for i in found_images] == [src_images[0].id]
+
+
+def test_skips_images_that_have_not_been_modified_yet(session: Session):
+    src_images = [
+        Image(original_filepath="a", reversible=None),
+        Image(original_filepath="b", reversible=None, modified_filepath="m"),
+    ]
+    session.add_all(src_images)
+
+    assert [i.id for i in find_unverified(session)] == [src_images[1].id]
 
 
 def test_persists_modified_image_entries(session: Session):
@@ -47,7 +57,7 @@ def test_persists_modified_image_entries(session: Session):
     src_images[2].reversible = False
     save_images(session, src_images)
 
-    assert [i.reversible for i in session.exec(select(Image).order_by(Image.id))] == [
+    assert session.exec(select(Image.reversible).order_by(Image.id)).all() == [
         True,
         True,
         False,

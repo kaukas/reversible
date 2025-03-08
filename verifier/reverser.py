@@ -1,18 +1,16 @@
 from json import loads
+from typing import cast
 from PIL import Image as PILImage
+
 from db_models import Image
 from modifier import unmodify
 
-class ModifiedFileMissing(Exception):
-    """Modified Filepath empty. The image was likely not modified."""
-
 
 def reversible(image: Image):
-    if not image.modified_filepath or not image.modification_params:
-        # TODO: test
-        raise ModifiedFileMissing()
-
     original_pil_image = PILImage.open(image.original_filepath)
-    modified_pil_image = PILImage.open(image.modified_filepath)
-    unmodify(modified_pil_image, loads(image.modification_params))
+    modified_pil_image = PILImage.open(cast(str, image.modified_filepath))
+    unmodify(
+        modified_pil_image,
+        loads(image.modification_params) if image.modification_params else None,
+    )
     return list(original_pil_image.getdata()) == list(modified_pil_image.getdata())
