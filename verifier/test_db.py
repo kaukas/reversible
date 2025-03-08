@@ -1,4 +1,4 @@
-from pytest import fixture, mark
+from pytest import fixture
 from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel, Session, create_engine, select
 
@@ -26,7 +26,6 @@ def test_yields_unverified_image_entries_from_db(session: Session):
         Image(original_filepath="c", reversible=True),
     ]
     session.add_all(src_images)
-    # session.commit()
 
     found_images = find_unverified(session)
     assert [i.id for i in found_images] == [src_images[0].id]

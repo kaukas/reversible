@@ -10,6 +10,7 @@ from app.deps import SessionDep
 
 
 def validate_and_modify_image(session: SessionDep, image_entry: Image):
+    # TODO: catch invalid.
     pil_image = PILImage.open(image_entry.original_filepath)
     image_entry.valid_image = True
     BitFlipper().modify(pil_image)
