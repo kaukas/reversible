@@ -10,7 +10,6 @@ from app.deps import SessionDep
 
 
 def validate_and_modify_image(session: SessionDep, image_entry: Image):
-    # TODO: prevent too large.
     try:
         pil_image = PILImage.open(image_entry.original_filepath)
     except UnidentifiedImageError as e:
