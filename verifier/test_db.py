@@ -57,7 +57,7 @@ def test_persists_modified_image_entries(session: Session):
     src_images[2].reversible = False
     save_images(session, src_images)
 
-    assert session.exec(select(Image.reversible).order_by(Image.id)).all() == [
+    assert session.exec(select(Image.reversible).order_by(Image.id)).all() == [  # type: ignore
         True,
         True,
         False,
