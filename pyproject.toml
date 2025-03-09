@@ -25,7 +25,3 @@ members = ["app", "modifier", "verifier", "db-models"]
 [tool.uv.sources]
 db-models = { workspace = true }
 modifier = { workspace = true }
-
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"

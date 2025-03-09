@@ -20,6 +20,10 @@ def validate_and_modify_image(session: SessionDep, image_entry: Image):
             image_entry.valid_image = False
             return
 
+        if pil_image.format != "PNG":
+            image_entry.valid_image = False
+            return
+
         image_entry.valid_image = True
         changes = modify(pil_image)
         if changes:

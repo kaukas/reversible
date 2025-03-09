@@ -112,14 +112,27 @@ def test_supports_RGB_images(session: Session, client: TestClient):
 
 @mark.usefixtures("standard_dirs")
 def test_does_not_support_non_RGB_or_RGBA_images(session: Session, client: TestClient):
-    def file_of_mode(mode: str, ext: str):
+    def file_of_mode(mode: str):
         pil_image = PILImage.new(mode, (10, 10))
+        buffer = BytesIO()
+        pil_image.save(buffer, "png")
+        return {"image": ("cat.png", buffer)}
+
+    for mode in ["1", "L", "P"]:
+        client.post("/images", files=file_of_mode(mode))
+    assert set(session.exec(select(Image.valid_image)).all()) == set([False])
+
+
+@mark.usefixtures("standard_dirs")
+def test_does_not_support_non_png_images(session: Session, client: TestClient):
+    def file_of_ext(ext: str):
+        pil_image = PILImage.new("RGB", (10, 10))
         buffer = BytesIO()
         pil_image.save(buffer, ext)
         return {"image": (f"cat.{ext}", buffer)}
 
-    for mode, ext in [("1", "png"), ("L", "png"), ("P", "png"), ("CMYK", "jpeg")]:
-        client.post("/images", files=file_of_mode(mode, ext))
+    for ext in ["jpeg", "bmp"]:
+        client.post("/images", files=file_of_ext(ext))
     assert set(session.exec(select(Image.valid_image)).all()) == set([False])
 
 
