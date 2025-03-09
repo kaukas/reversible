@@ -10,7 +10,7 @@ from uuid import uuid4
 
 from db_models import Image
 from modifier import modify
-from verifier import settings, verify
+from verifier.main import settings, verify
 
 
 @fixture

@@ -89,6 +89,15 @@ def test_uploads_an_image(session: Session, client: TestClient, fs: FakeFilesyst
     assert fs.exists(image_entry.original_filepath)
 
 
+def test_requires_an_image(client: TestClient):
+    # No image.
+    assert client.post("/images").status_code == 422
+
+    # Empty image.
+    response = client.post("/images", files={"image": ("cat.png", BytesIO())})
+    assert response.status_code == 422
+
+
 @mark.usefixtures("standard_dirs")
 def test_modifies_the_uploaded_image(
     session: Session, client: TestClient, fs: FakeFilesystem
