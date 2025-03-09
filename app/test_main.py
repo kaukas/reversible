@@ -114,6 +114,7 @@ def test_modifies_the_uploaded_image(
     assert isinstance(mod_filepath, str)
     assert dirname(mod_filepath) == settings.IMAGE_MODIFIED_PATH
     assert fs.exists(image_entry.modified_filepath)
+    assert image_entry.modification_params
 
     assert image_entry.valid_image == True
 

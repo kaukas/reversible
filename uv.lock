@@ -1,4 +1,5 @@
 version = 1
+revision = 1
 requires-python = ">=3.13.1"
 
 [manifest]
@@ -36,6 +37,16 @@ wheels = [
 name = "app"
 version = "0.1.0"
 source = { virtual = "app" }
+dependencies = [
+    { name = "db-models" },
+    { name = "modifier" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "db-models", editable = "db-models" },
+    { name = "modifier", editable = "modifier" },
+]
 
 [[package]]
 name = "black"
@@ -90,7 +101,7 @@ wheels = [
 [[package]]
 name = "db-models"
 version = "0.1.0"
-source = { virtual = "db_models" }
+source = { editable = "db-models" }
 
 [[package]]
 name = "dnspython"
@@ -266,7 +277,7 @@ wheels = [
 [[package]]
 name = "reversible"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
     { name = "pillow" },
@@ -350,7 +361,7 @@ wheels = [
 [[package]]
 name = "modifier"
 version = "0.1.0"
-source = { virtual = "modifier" }
+source = { editable = "modifier" }
 
 [[package]]
 name = "mypy-extensions"
@@ -723,6 +734,16 @@ wheels = [
 name = "verifier"
 version = "0.1.0"
 source = { virtual = "verifier" }
+dependencies = [
+    { name = "db-models" },
+    { name = "modifier" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "db-models", editable = "db-models" },
+    { name = "modifier", editable = "modifier" },
+]
 
 [[package]]
 name = "watchfiles"

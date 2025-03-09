@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlmodel import Session, create_engine
 
 from db import find_unverified
-from verifier.reverser import reversible
+from reverser import reversible
 
 
 class Settings(BaseSettings):
