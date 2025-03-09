@@ -85,6 +85,7 @@ def test_uploads_an_image(session: Session, client: TestClient, fs: FakeFilesyst
     assert len(all_images) == 1
     image_entry = all_images[0]
     assert image_entry.filename == "cat.png"
+    assert image_entry.valid_image == True
     assert dirname(image_entry.original_filepath) == settings.IMAGE_UPLOADED_PATH
     assert fs.exists(image_entry.original_filepath)
 
@@ -96,6 +97,30 @@ def test_requires_an_image(client: TestClient):
     # Empty image.
     response = client.post("/images", files={"image": ("cat.png", BytesIO())})
     assert response.status_code == 422
+
+
+@mark.usefixtures("standard_dirs")
+def test_supports_RGB_images(session: Session, client: TestClient):
+    pil_image = PILImage.new("RGB", (10, 10))
+    buffer = BytesIO()
+    pil_image.save(buffer, "png")
+
+    response = client.post("/images", files={"image": ("cat.png", buffer)})
+    assert response.status_code == 200
+    assert session.exec(select(Image.valid_image)).all() == [True]
+
+
+@mark.usefixtures("standard_dirs")
+def test_does_not_support_non_RGB_or_RGBA_images(session: Session, client: TestClient):
+    def file_of_mode(mode: str, ext: str):
+        pil_image = PILImage.new(mode, (10, 10))
+        buffer = BytesIO()
+        pil_image.save(buffer, ext)
+        return {"image": (f"cat.{ext}", buffer)}
+
+    for mode, ext in [("1", "png"), ("L", "png"), ("P", "png"), ("CMYK", "jpeg")]:
+        client.post("/images", files=file_of_mode(mode, ext))
+    assert set(session.exec(select(Image.valid_image)).all()) == set([False])
 
 
 @mark.usefixtures("standard_dirs")

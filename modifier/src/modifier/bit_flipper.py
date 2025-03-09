@@ -19,11 +19,10 @@ class BitFlipper:
         dims = image.size
         for i in indices:
             xy = (floor(i / dims[1]), i % dims[1])
-            rgba = image.getpixel(xy)
-            if not rgba:
-                raise IndexError(f"RGBA value empty at {xy}")
-            if isinstance(rgba, float) or isinstance(rgba, int):
-                raise IndexError(f"RGBA value invalid at {xy}")
-            image.putpixel(
-                xy, (~rgba[0] & 0xFF, ~rgba[1] & 0xFF, ~rgba[2] & 0xFF, rgba[3])
-            )
+            pixel = image.getpixel(xy)
+            if not pixel:
+                raise IndexError(f"Pixel value empty at {xy}")
+            if isinstance(pixel, float) or isinstance(pixel, int):
+                raise IndexError(f"Pixel value invalid at {xy}")
+            pixel = (*[~band_val & 0xFF for band_val in pixel[:3]], *(pixel[3:]))
+            image.putpixel(xy, pixel)
