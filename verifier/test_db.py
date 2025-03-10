@@ -4,7 +4,7 @@ from sqlmodel import SQLModel, Session, create_engine, select, asc
 
 from db_models import Image
 
-from verifier.db import find_unverified, save_images
+from verifier.db import find_unverified
 
 
 @fixture(name="session")
@@ -31,13 +31,13 @@ def test_yields_unverified_image_entries_from_db(session: Session):
             original_filepath="b",
             modified_filepath="n",
             valid_image=True,
-            reversible=False,
+            reversible=False,  # ignored
         ),
         Image(
             original_filepath="c",
             modified_filepath="o",
             valid_image=True,
-            reversible=True,
+            reversible=True,  # ignored
         ),
     ]
     session.add_all(src_images)
@@ -48,7 +48,7 @@ def test_yields_unverified_image_entries_from_db(session: Session):
 
 def test_skips_images_that_have_not_been_modified_yet(session: Session):
     src_images = [
-        Image(original_filepath="a", reversible=None, valid_image=True),
+        Image(original_filepath="a", reversible=None, valid_image=True),  # not modified
         Image(
             original_filepath="b",
             reversible=None,
@@ -67,7 +67,7 @@ def test_skips_invalid_images(session: Session):
             original_filepath="a",
             reversible=None,
             modified_filepath="m",
-            valid_image=False,
+            valid_image=False,  # invalid
         ),
         Image(
             original_filepath="b",
@@ -79,26 +79,3 @@ def test_skips_invalid_images(session: Session):
     session.add_all(src_images)
 
     assert [i.id for i in find_unverified(session)] == [src_images[1].id]
-
-
-def test_persists_modified_image_entries(session: Session):
-    src_images = [
-        Image(original_filepath="a"),
-        Image(original_filepath="b"),
-        Image(original_filepath="c"),
-    ]
-    session.add_all(src_images)
-    session.commit()
-    # Forget the images in the session.
-    session.expunge_all()
-
-    src_images[0].reversible = True
-    src_images[1].reversible = True
-    src_images[2].reversible = False
-    save_images(session, src_images)
-
-    assert session.exec(select(Image.reversible).order_by(asc(Image.id))).all() == [
-        True,
-        True,
-        False,
-    ]

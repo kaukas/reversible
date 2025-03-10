@@ -1,12 +1,14 @@
 from collections.abc import Generator
-from typing import Annotated
-from sqlmodel import Session
 from fastapi import Depends
+from sqlmodel import Session
+from typing import Annotated
 
 from app.core.db import engine
 
 
 def get_session() -> Generator[Session, None, None]:
+    """Create a SQLAlchemy session."""
+
     with Session(engine) as session:
         yield session
 

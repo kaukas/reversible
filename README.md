@@ -1,6 +1,6 @@
 # Reversible
 
-An API service that performs pixel level modifications to images, and stores the images, both original and modified. Only PNG images supported at the moment.
+An API service that performs pixel level modifications to images, and stores the images, both original and modified.
 
 Currently supported modifications:
 
@@ -9,6 +9,8 @@ Currently supported modifications:
 *More to be implemented later.*
 
 The project also includes a tool to verify that modified images become identical once changes are reversed.
+
+Only PNG images supported at the moment. For JPEG, Pillow modifies the originals before even saving them which makes them irreversable.
 
 ## Setup
 
@@ -74,7 +76,7 @@ make pyright
 
 # Project contents
 
-The `app` folder stores the API service code. The service can list uploaded images and supports an upload of another image. After upload the service parses the image with [Pillow](https://pillow.readthedocs.io/), modifies it, and stores both versions on disk. The modification metadata is stored in a SQLite database.
+The `app` folder stores the API service code. The service can list uploaded images and supports an upload of another image. After upload the service parses the image with [Pillow](https://pillow.readthedocs.io/), modifies it, and stores both versions on disk. The modification metadata is stored in a SQLite database. Image file retrieval not implemented yet.
 
 The `verifier` folder stores a script to verify that image modifications are reversible. It reads the modified images, modifies them in reverse, and compares results to the original images.
 

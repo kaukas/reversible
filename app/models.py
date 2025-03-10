@@ -1,5 +1,7 @@
-from typing import Sequence
 from sqlmodel import SQLModel
+from typing import Sequence
+
+### Models that are returned by the API.
 
 
 class ImagePublic(SQLModel):

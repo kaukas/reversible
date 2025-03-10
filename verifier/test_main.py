@@ -1,5 +1,5 @@
-from json import dumps
 from PIL import Image as PILImage
+from json import dumps
 from os.path import join
 from pyfakefs.fake_filesystem import FakeFilesystem
 from pytest import fixture, mark
@@ -9,8 +9,8 @@ from typing import cast
 from uuid import uuid4
 
 from db_models import Image
-from modifier import modify
 from main import settings, verify
+from modifier import modify
 
 
 @fixture

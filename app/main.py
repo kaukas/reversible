@@ -1,8 +1,8 @@
 from contextlib import asynccontextmanager
-from pathlib import Path
 from fastapi import BackgroundTasks, FastAPI, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from os.path import join
+from pathlib import Path
 from shutil import copyfileobj
 from sqlmodel import select
 from typing import Sequence, cast
@@ -28,7 +28,7 @@ async def lifespan(_: FastAPI):
 app = FastAPI(lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
-    # The demo server runs on 8001.
+    # The demo server listens on 8001.
     allow_origins=["http://localhost:8000", "http://localhost:8001"],
     allow_methods=["*"],
     allow_headers=["*"],

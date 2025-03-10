@@ -11,6 +11,13 @@ from app.deps import SessionDep
 
 
 def validate_and_modify_image(session: SessionDep, image_entry: Image):
+    """
+    Load and modify the user uploaded image
+
+    Attempt to parse the image with PIL. Make sure it's a PNG of mode RGB or RGBA.
+    Modify the image, and persist the the image and its params.
+    """
+
     try:
         pil_image = PILImage.open(image_entry.original_filepath)
     except UnidentifiedImageError:

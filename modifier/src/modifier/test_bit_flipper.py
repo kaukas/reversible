@@ -37,8 +37,8 @@ def test_flips_bits_of_random_pixels_and_reports_their_indices():
     assert len(indices) == 100
 
     px_after = list(image.getdata())
-    changed = [i for i, (pb, pa) in enumerate(zip(px_before, px_after)) if pb != pa]
-    assert len(changed) == 100
+    # 100 pixels differ.
+    assert sum(0 if pb == pa else 1 for (pb, pa) in (zip(px_before, px_after))) == 100
 
 
 def test_flips_the_modified_pixels_back():

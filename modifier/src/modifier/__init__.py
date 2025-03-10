@@ -1,5 +1,5 @@
-from typing import Any
 from PIL.Image import Image
+from typing import Any
 
 from modifier.bit_flipper import BitFlipper
 

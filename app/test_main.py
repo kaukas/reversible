@@ -1,17 +1,17 @@
+from PIL import Image as PILImage
+from fastapi.testclient import TestClient
 from io import BytesIO
 from os.path import dirname
+from pyfakefs.fake_filesystem import FakeFilesystem
 from pytest import fixture, mark
-from fastapi.testclient import TestClient
 from sqlalchemy.pool import StaticPool
 from sqlmodel import SQLModel, Session, create_engine, select
-from PIL import Image as PILImage
-from pyfakefs.fake_filesystem import FakeFilesystem
 
 from db_models import Image
 
+from .main import app
 from app.core.config import settings
 from app.deps import get_session
-from .main import app
 
 
 @fixture
