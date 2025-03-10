@@ -1,5 +1,9 @@
+install:
+	uv sync
+PHONY: install
+
 serve-api:
-	uv run fastapi dev
+	uv run --project app fastapi dev
 PHONY: serve-api
 
 serve-demo:
@@ -9,11 +13,15 @@ PHONY: serve-demo
 verify-images-loop:
 	while true; do \
 		printf "Verifying..."; \
-		uv run verifier/main.py; \
+		uv run --project verifier verifier/main.py; \
 		echo " done"; \
 		sleep 5; \
 	done
 PHONY: verify-images-loop
+
+test:
+	uv run pytest
+PHONY: test
 
 black:
 	uv run black app db-models modifier verifier
